@@ -65,7 +65,7 @@ def get_wufoo_data() -> dict:
     response = requests.get(url, auth=HTTPBasicAuth(wufoo_key, 'pass'))
 
     if response.status_code != 200:
-        print("Failed to get data, response code: {} and error message: {}".format(response.status_code, response.reason))
+        print(f"Failed to get data, response code: {response.status_code} and error message: {response.reason}")
         sys.exit(-1)
 
     jsonresponse = response.json()
@@ -79,11 +79,22 @@ def write_wufoo_data():
 
     # create the table if it doesn't already exist
     c.execute('''CREATE TABLE IF NOT EXISTS entries
-                 (Entry_Id text, Title text, First_Name text, Last_Name text,
-                 Org_Title text, Organization text, Email text, Org_Website text,
-                 Phone_Number text, Time_Period text, Permission text,
-                 Opportunities text, Date_Created text, Created_By text, 
-                 Date_Updated text, Updated_By text)''')
+                 (Entry_Id text,
+                  Title text,
+                  First_Name text,
+                  Last_Name text,
+                  Org_Title text,
+                  Organization text,
+                  Email text,
+                  Org_Website text,
+                  Phone_Number text,
+                  Time_Period text,
+                  Permission text,
+                  Opportunities text,
+                  Date_Created text,
+                  Created_By text, 
+                  Date_Updated text, 
+                  Updated_By text)''')
 
     # retrieve the data from Wufoo
     data = get_wufoo_data()
@@ -95,11 +106,25 @@ def write_wufoo_data():
                                   item.get('Field118', '')])
 
         c.execute("INSERT INTO entries VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                  (item['EntryId'], item.get('Field214', ''), item.get('Field1', ''), item.get('Field2', ''), item.get('Field8', ''),
-                   item.get('Field9', ''), item.get('Field5', ''), item.get('Field6', ''), item.get('Field7', ''),
-                   ', '.join([item.get('Field12', ''), item.get('Field13', ''), item.get('Field14', ''),
-                             item.get('Field15', ''), item.get('Field16', '')]), item.get('Field212', ''),
-                   opportunities, item.get('DateCreated', ''), item.get('CreatedBy', ''), item.get('DateUpdated', ''), item.get('UpdatedBy', '')))
+                  (item['EntryId'],
+                   item.get('Field214', ''),
+                   item.get('Field1', ''),
+                   item.get('Field2', ''),
+                   item.get('Field8', ''),
+                   item.get('Field9', ''),
+                   item.get('Field5', ''),
+                   item.get('Field6', ''),
+                   item.get('Field7', ''),
+                   ', '.join([item.get('Field12', ''),
+                              item.get('Field13', ''),
+                              item.get('Field14', ''),
+                              item.get('Field15', ''),
+                              item.get('Field16', '')]),
+                   item.get('Field212', ''),
+                   opportunities,
+                   item.get('DateCreated', ''),
+                   item.get('CreatedBy', ''),
+                   item.get('DateUpdated', ''), item.get('UpdatedBy', '')))
 
     # commit the changes to the database and close the connection
     conn.commit()
@@ -108,4 +133,3 @@ def write_wufoo_data():
 
 if __name__ == "__main__":
     write_wufoo_data()
-
