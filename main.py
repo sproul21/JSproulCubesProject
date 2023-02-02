@@ -92,8 +92,8 @@ def write_wufoo_data():
                   Permission text,
                   Opportunities text,
                   Date_Created text,
-                  Created_By text, 
-                  Date_Updated text, 
+                  Created_By text,
+                  Date_Updated text,
                   Updated_By text)''')
 
     # retrieve the data from Wufoo
