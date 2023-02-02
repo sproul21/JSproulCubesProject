@@ -39,4 +39,3 @@ def print_file(file_name):
 
 if __name__ == "__main__":
     write_wufoo_data()
-
