@@ -1,4 +1,4 @@
-import json
+
 import sys
 import requests
 from secrets import wufoo_key
@@ -17,7 +17,7 @@ def get_wufoo_data() -> dict:
 
 
 # each dictionary represents a json object
-def write_wufu_data():
+def write_wufoo_data():
     # JSON data
     data = get_wufoo_data()['Entries']
 
@@ -38,4 +38,5 @@ def print_file(file_name):
 
 
 if __name__ == "__main__":
-    write_wufu_data()
+    write_wufoo_data()
+
