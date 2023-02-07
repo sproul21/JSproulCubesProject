@@ -60,7 +60,7 @@ from secrets import wufoo_key
 from requests.auth import HTTPBasicAuth
 
 
-def get_wufoo_data() -> dict:
+def get_wufoo_data() -> dict:  # comment to test workflow
     url = "https://jsproul.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json"
     response = requests.get(url, auth=HTTPBasicAuth(wufoo_key, 'pass'))
 
