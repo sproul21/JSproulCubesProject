@@ -77,6 +77,7 @@ def write_wufoo_data():
     conn.close()
 
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -150,6 +151,7 @@ class Application(tk.Frame):
         c.execute("SELECT * FROM entries WHERE Title || ' ' || First_Name || ' ' || Last_Name = ?", (entry,))
         data = c.fetchone()
         conn.close()
+
 
         # update the labels in the entry frame
         for i, value_label in enumerate(self.value_labels):
