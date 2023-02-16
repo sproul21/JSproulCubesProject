@@ -76,6 +76,7 @@ def write_wufoo_data():
     conn.commit()
     conn.close()
 
+
 class Application(tk.Frame):
 
     def __init__(self, master=None):
@@ -152,10 +153,10 @@ class Application(tk.Frame):
         data = c.fetchone()
         conn.close()
 
-
         # update the labels in the entry frame
         for i, value_label in enumerate(self.value_labels):
             value_label.config(text=data[i+1])
+
 
 root = tk.Tk()
 app = Application(master=root)
