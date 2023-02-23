@@ -4,6 +4,7 @@ import sqlite3
 from secrets import wufoo_key
 from requests.auth import HTTPBasicAuth
 import tkinter as tk
+from typing import Tuple
 
 
 def get_wufoo_data() -> dict:  # comment to test workflow
@@ -48,8 +49,8 @@ def write_wufoo_data():
     # insert the data into the table
     for item in data:
         opportunities = ', '.join([item.get('Field112', ''), item.get('Field113', ''), item.get('Field114', ''),
-                                  item.get('Field115', ''), item.get('Field116', ''), item.get('Field117', ''),
-                                  item.get('Field118', '')])
+                                   item.get('Field115', ''), item.get('Field116', ''), item.get('Field117', ''),
+                                   item.get('Field118', '')])
 
         c.execute("INSERT INTO entries VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                   (item['EntryId'],
@@ -86,22 +87,21 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        # create a PanedWindow with two panes
+
         self.paned_window = tk.PanedWindow(self.master, orient=tk.HORIZONTAL)
         self.paned_window.pack(fill=tk.BOTH, expand=1)
 
-        # create a listbox in the first pane
         self.listbox = tk.Listbox(self.paned_window)
         self.listbox.bind('<<ListboxSelect>>', self.show_entry)
         self.paned_window.add(self.listbox)
 
-        # create a frame in the second pane
         self.entry_frame = tk.Frame(self.paned_window)
         self.paned_window.add(self.entry_frame)
 
         # create labels in the entry frame
         self.labels = []
-        fields = ["Title", "First Name", "Last Name", "Organization Title", "Organization", "Email", "Organization Website",
+        fields = ["Title", "First Name", "Last Name", "Organization Title", "Organization", "Email",
+                  "Organization Website",
                   "Phone Number", "Time Period", "Permission", "Opportunities", "Date Created", "Created By",
                   "Date Updated", "Updated By"]
         for i, field in enumerate(fields):
@@ -124,7 +124,6 @@ class Application(tk.Frame):
         self.listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.listbox.yview)
 
-        # load the data
         self.load_data()
 
     def load_data(self):
@@ -146,21 +145,53 @@ class Application(tk.Frame):
         index = self.listbox.curselection()[0]
         entry = self.listbox.get(index)
 
-        # connect to the database and retrieve the full entry
+        # connect to the database and retrieve the entry
         conn = sqlite3.connect('wufoo_data.db')
         c = conn.cursor()
         c.execute("SELECT * FROM entries WHERE Title || ' ' || First_Name || ' ' || Last_Name = ?", (entry,))
         data = c.fetchone()
         conn.close()
 
-        # update the labels in the entry frame
+        # update the labels
         for i, value_label in enumerate(self.value_labels):
-            value_label.config(text=data[i+1])
+            value_label.config(text=data[i + 1])
 
 
-root = tk.Tk()
-app = Application(master=root)
-app.mainloop()
+def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
+    db_connection = sqlite3.connect(
+        filename
+    )  # connect to existing DB or create new one
+    cursor = db_connection.cursor()  # get ready to read/write data
+    return db_connection, cursor
+
+
+def create_entries_table(cursor: sqlite3.Cursor):
+    create_statement = """CREATE TABLE IF NOT EXISTS WuFooData(
+    entryID INTEGER PRIMARY KEY,
+    prefix TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    title TEXT,
+    org TEXT,
+    email TEXT,
+    website TEXT,
+    course_project BOOLEAN,
+    guest_speaker BOOLEAN,
+    site_visit BOOLEAN,
+    job_shadow BOOLEAN,
+    internship BOOLEAN,
+    career_panel BOOLEAN,
+    networking_event BOOLEAN,
+    subject_area TEXT NOT NULL,
+    description TEXT,
+    funding BOOLEAN,
+    created_date TEXT,
+    created_by TEXT);"""
+    cursor.execute(create_statement)
+
 
 if __name__ == "__main__":
     write_wufoo_data()
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
