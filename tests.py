@@ -5,7 +5,7 @@ import main
 def test_get_data():
     json_data = main.get_wufoo_data()
 
-    assert len(json_data) >= 2
+    assert len(json_data) >= 10
 
 
 def test_table_created():
